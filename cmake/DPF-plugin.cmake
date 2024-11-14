@@ -1065,7 +1065,7 @@ function(dpf__add_dgl_system_libs)
     endif()
    endif()
 
-   if(MSVC)
+   if(MSVC OR(WIN32 AND CMAKE_CXX_COMPILER MATCHES "clang\\+\\+"))
      file(MAKE_DIRECTORY "${DPF_ROOT_DIR}/khronos/GL")
      foreach(_gl_header "glext.h")
        if(NOT EXISTS "${DPF_ROOT_DIR}/khronos/GL/${_gl_header}")
