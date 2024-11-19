@@ -200,11 +200,11 @@ public:
     */
     DISTRHO_DEPRECATED
     GLenum getType() const noexcept { return GL_UNSIGNED_BYTE; }
-
+    GLuint textureId;
 private:
     bool setupCalled;
     bool textureInit;
-    GLuint textureId;
+    
 };
 
 // -----------------------------------------------------------------------
