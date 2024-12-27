@@ -58,7 +58,13 @@ public:
        #else
         pthread_mutexattr_t attr;
         pthread_mutexattr_init(&attr);
-        pthread_mutexattr_setprotocol(&attr, inheritPriority ? PTHREAD_PRIO_INHERIT : PTHREAD_PRIO_NONE);
+        #ifdef _WIN32  
+        // Windows 平台不支持优先级继承，直接忽略  
+        (void)inheritPriority;  
+#else  
+        // 非 Windows 平台使用原有代码  
+        pthread_mutexattr_setprotocol(&attr, inheritPriority ? PTHREAD_PRIO_INHERIT : PTHREAD_PRIO_NONE);  
+#endif  
         pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_NORMAL);
         pthread_mutex_init(&fMutex, &attr);
         pthread_mutexattr_destroy(&attr);
@@ -230,7 +236,11 @@ public:
 
         pthread_mutexattr_t mattr;
         pthread_mutexattr_init(&mattr);
-        pthread_mutexattr_setprotocol(&mattr, PTHREAD_PRIO_INHERIT);
+        #ifdef _WIN32  
+            // Windows 平台跳过优先级设置  
+        #else  
+            pthread_mutexattr_setprotocol(&mattr, PTHREAD_PRIO_INHERIT);  
+        #endif 
         pthread_mutexattr_settype(&mattr, PTHREAD_MUTEX_NORMAL);
         pthread_mutex_init(&fMutex, &mattr);
         pthread_mutexattr_destroy(&mattr);

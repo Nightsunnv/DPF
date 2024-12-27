@@ -256,7 +256,7 @@ function(dpf__build_jack NAME HAS_UI)
   target_link_libraries("${NAME}-jack" PRIVATE "${NAME}-dsp" "${NAME}-ui")
   set_target_properties("${NAME}-jack" PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/bin/$<0:>"
-    OUTPUT_NAME "${NAME}")
+    OUTPUT_NAME "${NAME}-jack")
 
   target_compile_definitions("${NAME}" PUBLIC "HAVE_JACK")
   target_compile_definitions("${NAME}-jack" PRIVATE "HAVE_GETTIMEOFDAY")
