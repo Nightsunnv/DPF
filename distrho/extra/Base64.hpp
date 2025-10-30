@@ -21,7 +21,7 @@
 
 #include <vector>
 
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // base64 stuff, based on http://www.adp-gmbh.ch/cpp/common/base64.html
 
 /*
@@ -48,7 +48,7 @@
    René Nyffenegger rene.nyffenegger@adp-gmbh.ch
 */
 
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 // Helpers
 
 #ifndef DOXYGEN
@@ -77,93 +77,24 @@ uint8_t findBase64CharIndex(const char c)
 static constexpr inline
 bool isBase64Char(const char c)
 {
-    switch (c)
-    {
-    case 'A':
-    case 'B':
-    case 'C':
-    case 'D':
-    case 'E':
-    case 'F':
-    case 'G':
-    case 'H':
-    case 'I':
-    case 'J':
-    case 'K':
-    case 'L':
-    case 'M':
-    case 'N':
-    case 'O':
-    case 'P':
-    case 'Q':
-    case 'R':
-    case 'S':
-    case 'T':
-    case 'U':
-    case 'V':
-    case 'W':
-    case 'X':
-    case 'Y':
-    case 'Z':
-    case 'a':
-    case 'b':
-    case 'c':
-    case 'd':
-    case 'e':
-    case 'f':
-    case 'g':
-    case 'h':
-    case 'i':
-    case 'j':
-    case 'k':
-    case 'l':
-    case 'm':
-    case 'n':
-    case 'o':
-    case 'p':
-    case 'q':
-    case 'r':
-    case 's':
-    case 't':
-    case 'u':
-    case 'v':
-    case 'w':
-    case 'x':
-    case 'y':
-    case 'z':
-    case '0':
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-    case '+':
-    case '/':
-        return true;
-    default:
-        return false;
-    }
+    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '+' || c == '/';
 }
 
 } // namespace DistrhoBase64Helpers
 #endif
 
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 static inline
-std::vector<uint8_t> d_getChunkFromBase64String(const char* const base64string)
+void d_getChunkFromBase64String_impl(std::vector<uint8_t>& vector, const char* const base64string)
 {
-    DISTRHO_SAFE_ASSERT_RETURN(base64string != nullptr, std::vector<uint8_t>());
+    vector.clear();
+    DISTRHO_SAFE_ASSERT_RETURN(base64string != nullptr,);
 
     uint i=0, j=0;
     uint charArray3[3], charArray4[4];
 
-    std::vector<uint8_t> ret;
-    ret.reserve(std::strlen(base64string)*3/4 + 4);
+    vector.reserve(std::strlen(base64string)*3/4 + 4);
 
     for (std::size_t l=0, len=std::strlen(base64string); l<len; ++l)
     {
@@ -188,7 +119,7 @@ std::vector<uint8_t> d_getChunkFromBase64String(const char* const base64string)
             charArray3[2] = ((charArray4[2] & 0x3) << 6) +   charArray4[3];
 
             for (i=0; i<3; ++i)
-                ret.push_back(static_cast<uint8_t>(charArray3[i]));
+                vector.push_back(static_cast<uint8_t>(charArray3[i]));
 
             i = 0;
         }
@@ -207,12 +138,18 @@ std::vector<uint8_t> d_getChunkFromBase64String(const char* const base64string)
         charArray3[2] = ((charArray4[2] & 0x3) << 6) +   charArray4[3];
 
         for (j=0; i>0 && j<i-1; j++)
-            ret.push_back(static_cast<uint8_t>(charArray3[j]));
+            vector.push_back(static_cast<uint8_t>(charArray3[j]));
     }
+}
 
+static inline
+std::vector<uint8_t> d_getChunkFromBase64String(const char* const base64string)
+{
+    std::vector<uint8_t> ret;
+    d_getChunkFromBase64String_impl(ret, base64string);
     return ret;
 }
 
-// -----------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------------------------
 
 #endif // DISTRHO_BASE64_HPP_INCLUDED

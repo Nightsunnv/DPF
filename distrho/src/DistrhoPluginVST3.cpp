@@ -1573,7 +1573,7 @@ public:
                 {
                    #if DISTRHO_PLUGIN_WANT_MIDI_INPUT
                     // if there are any MIDI CC events as parameter changes, handle them here
-                    if (canAppendMoreEvents && rindex >= kVst3InternalParameterMidiCC_start && rindex <= kVst3InternalParameterMidiCC_end)
+                    if (canAppendMoreEvents && rindex >= kVst3InternalParameterMidiCC_start && rindex < kVst3InternalParameterCount)
                     {
                         for (int32_t j = 0, pcount = v3_cpp_obj(queue)->get_point_count(queue); j < pcount; ++j)
                         {
@@ -1747,6 +1747,12 @@ public:
         case kParameterDesignationBypass:
             flags |= V3_PARAM_IS_BYPASS;
             break;
+        case kParameterDesignationReset:
+            info->flags = V3_PARAM_READ_ONLY | V3_PARAM_IS_HIDDEN;
+            info->step_count = 1;
+            strncpy_utf16(info->title, "Reset", 128);
+            strncpy_utf16(info->short_title, "Reset", 128);
+            return V3_OK;
         }
 
         if (hints & kParameterIsOutput)
@@ -2008,7 +2014,7 @@ public:
            #if !DPF_VST3_PURE_MIDI_INTERNAL_PARAMETERS
             rindex >= kVst3InternalParameterMidiCC_start &&
            #endif
-            rindex <= kVst3InternalParameterMidiCC_end)
+            rindex < kVst3InternalParameterCount)
             return 0.0;
        #endif
 
@@ -2045,7 +2051,7 @@ public:
            #if !DPF_VST3_PURE_MIDI_INTERNAL_PARAMETERS
             rindex >= kVst3InternalParameterMidiCC_start &&
            #endif
-            rindex <= kVst3InternalParameterMidiCC_end)
+            rindex < kVst3InternalParameterCount)
             return V3_INVALID_ARG;
        #endif
 
